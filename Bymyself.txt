@@ -1,0 +1,116 @@
+
+------------------------------------------------------------
+select*from students s
+select count(student_epita_email),student_population_period_ref from students s
+where student_population_code_ref in ('DSA')
+group by student_population_period_ref
+---------------------------------------------------
+select*from grades g
+select grade_student_epita_email_ref,grade_score from grades g 
+where grade_score > 
+(select avg(grade_score) from grades g )
+order by grade_score 
+
+select avg(grade_score) from grades g 
+
+--------------------------------------------
+--1- Get all enrolled students for a specific period,program,year ?
+select student_epita_email, student_enrollment_status, student_population_period_ref, student_population_year_ref, student_population_code_ref from students s 
+
+--2- Get number of enrolled students for a specific period,program,year
+select*from students s
+select count(1) from students s 
+
+select count(student_epita_email),student_population_code_ref from students s
+group by student_population_code_ref 
+
+select count(student_epita_email),student_population_period_ref from students s 
+group by student_population_period_ref 
+
+select count(student_epita_email), student_population_year_ref from students s 
+group by student_population_year_ref
+
+--3- Get All defined exams for a course from grades table*
+select grade_course_code_ref, grade_exam_type_ref from grades g 
+--- 4-Get all grades for a student
+select*from grades g2 
+select grade_student_epita_email_ref, grade_score from grades g
+--- 5-Get all grades for a specific Exam*
+select grade_course_code_ref, grade_score from grades g
+--6-Get students Ranks in an Exam for a course
+select*from  grades g
+select grade_student_epita_email_ref , grade_course_code_ref , grade_exam_type_ref ,grade_score, rank () over (order by grade_score ) as rank_number from grades g
+where grade_course_code_ref ='DT_RDBMS' and grade_exam_type_ref ='Project'
+---7-Get students Ranks in all exams for a course
+select grade_student_epita_email_ref , grade_course_code_ref , grade_exam_type_ref ,grade_score, rank () over (order by grade_score ) as rank_number from grades g
+where grade_course_code_ref ='DT_RDBMS' 
+
+---8-Get students Rank in all exams in all courses
+select grade_student_epita_email_ref , grade_course_code_ref , grade_exam_type_ref ,grade_score, rank () over (order by grade_score ) as rank_number from grades g
+
+---9-Get all courses for one program
+select*from programs p 
+
+select program_course_code_ref, program_assignment from programs p 
+where program_assignment ='DSA'
+
+---10-Get courses in common between 2 programs (HARD)
+select*from programs p 
+select count(program_course_code_ref),program_course_code_ref from programs p 
+group by program_course_code_ref 
+HAVING COUNT(program_course_code_ref)=2
+--HAVING COUNT(program_course_code_ref)=2
+select *from programs p2 
+where program_course_code_ref in (
+ select program_course_code_ref from programs p
+ group by program_course_code_ref having count(program_course_code_ref ) =2
+)
+
+---11-Get all programs following a certain course
+select *from programs p2 
+
+select program_course_code_ref, program_assignment from programs p
+where program_course_code_ref ='PG_PYTHON'
+
+---12- get course with the biggest duration (HARD)
+select *from courses c 
+
+--method 1
+select course_name, duration from courses c 
+where duration=( select max(duration) from courses c) 
+
+
+---13-get courses with the same duration (HARD)
+select*from courses c
+where duration in (
+select duration from courses c2 
+group by duration having count(*)>1
+ )
+order by duration desc
+
+---14-Get all sessions for a specific course*
+select*from sessions s 
+--15-Get all session for a certain period
+select session_course_ref,session_population_period from sessions s
+where session_population_period = 'FALL'
+--16-Get one student attendance sheet
+select *from attendance a 
+
+where attendance_student_ref ='jamal.vanausdal@epita.fr'
+---17- Get one student summary of attendance
+select count(attendance_student_ref) , attendance_presence from attendance a
+where attendance_student_ref='jamal.vanausdal@epita.fr'
+group by attendance_presence 
+--18-Get student with most absences
+
+with mostAbsent as (
+    select attendance_student_ref , count(attendance_presence='0') as mostAbsent
+    from attendance a
+    group by attendance_student_ref
+)
+select max(mostAbsent) from mostAbsent;
+--
+select max(attendance_student_ref) from attendance a 
+where attendance_presence = 0
+
+
