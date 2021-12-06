@@ -1,0 +1,54 @@
+union: ghep data của hai cột ở hai bảng riêng lẻ nhập thành data một cột
+limit để lấy giới hạn data
+max(column) : lay value lon nhat 
+min(column) : lay value nho nhat
+
+----cho các trường hợp cao nhất, thấp nhất, sớm nhất, muộn nhất,,, so sánh nhất cho một đối tượng*
+method 1 ( MAX, MIN)
+select surname,firstname,joindate from cd.members
+where joindate= 
+( select max(joindate) from cd.members);
+----- xuất ra X(so nhieu) giá trị cao nhất or thấp nhất. Tính chất sắp xếp của đối tượng từ cao xuống thấp có sẵn theo order by
+--- X là số đối tượng cần truy xuất, nếu tìm 1 đối tượng thì cho limit=1 *
+select product_name, unit_price from products p 
+order by unit_price desc 
+limit 10
+
+
+---- cách count tránh duplicate
+select count(distinct ship_country) from orders o
+ 
+-------------------- Cách group đối tượng, Gap cau nao count per X
+number of thi dung 'count (column can count)' group by X
+Group by X_ID ( Lay X_ID o table goc cua chinh no PK)
+
+------UPPER tranh viet hoa
+
+where upper(o.ship_country )  in ('FRANCE','BELGIUM')
+-------------tinh trung binh Write a query to get Product list (name, unit price) of above average price
+select product_name,unit_price from products p2 
+where unit_price >
+  (select avg(unit_price) from products p)
+ order by unit_price
+--------------------RANK
+
+
+SELECT
+	column,
+	RANK () OVER ( 
+		ORDER BY column
+	) rank_number 
+FROM
+	table; 
+----- Check duplicate value
+---10-Get courses in common between 2 programs
+
+select count(program_course_code_ref),program_course_code_ref from programs p 
+group by program_course_code_ref 
+HAVING COUNT(program_course_code_ref)>1
+--HAVING COUNT(program_course_code_ref)=2
+
+____________________________________________________________________
+
+https://developpaper.com/50-sql-interview-questions/
+https://www.postgresqltutorial.com/
